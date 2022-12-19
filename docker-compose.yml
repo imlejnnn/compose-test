@@ -1,0 +1,21 @@
+version: "2.12"
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports: 
+      - "80:80"
+    volumes:
+      - ./www:/var/www
+      - ./nginx/dev.conf:/etc/nginx/conf.d/default.conf
+    restart: always
+
+  php:
+    build: .
+    healthcheck:
+      test: ["CMD-SHELL", "curl -v --silent http://nginx/ 2>&1 | grep \"It works\""]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - ./www:/var/www
